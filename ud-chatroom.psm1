@@ -9,8 +9,9 @@ function Start-UDChatroom {
     ) 
 
     $EndpointInit = New-UDEndpointInitialization
-    $EndpointInit.ImportPSModulesFromPath($PSScriptRoot)
-    
+    $Modules = (Get-Module).Path
+    $EndpointInit.ImportPSModules($Modules)
+
     $dashboard = New-UDDashboard -EndpointInitialization $EndpointInit -Title "PowerShell Universal Dashboard Chatroom" -Content {
         New-UDRow -Columns { 
             New-UDColumn -Size 12 -Endpoint {
