@@ -1,5 +1,5 @@
 function Start-UDChatroom {
-    param($Port = 10000)
+    param($Port = 10000, [Switch]$Wait)
     $loginPage = New-UDLoginPage -AuthenticationMethod @(
         New-UDAuthenticationMethod -Endpoint {
             param([PSCredential]$Credentials)
@@ -49,6 +49,6 @@ function Start-UDChatroom {
         }
     } -LoginPage $LoginPage 
     
-    Start-UDDashboard -Port $Port -Dashboard $dashboard -AllowHttpForLogin -Force -Design
+    Start-UDDashboard -Port $Port -Dashboard $dashboard -AllowHttpForLogin -Force -Wait:$Wait
 }
 
