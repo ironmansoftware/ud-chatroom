@@ -7,6 +7,3 @@ Save-Module -Name UniversalDashboard -Path $Staging -AcceptLicense -RequiredVers
 Save-Module -Name UniversalDashboard.CodeEditor -Path $Staging -RequiredVersion 1.0
 Copy-Item -Path "$Staging/UniversalDashboard/2.6.0/*" -Destination $Staging -Container -Recurse
 Remove-Item -Path "$Staging/UniversalDashboard" -Force -Recurse 
-
-# Copy-Item -Path "$Staging/UniversalDashboard.CodeEditor/1.0.0/*" -Destination "$Staging/UniversalDashboard.CodeEditor/" -Container -Recurse
-# Remove-Item -Path "$Staging/UniversalDashboard.CodeEditor/1.0.0" -Force -Recurse 
