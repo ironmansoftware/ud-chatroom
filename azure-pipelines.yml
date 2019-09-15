@@ -7,3 +7,9 @@ pool:
 steps:
 - script: pwsh -File './deploy.ps1'
   displayName: 'Copy and Download UDs'
+
+  # Publish Pipeline Artifact
+- task: PublishPipelineArtifact@0
+  inputs:
+    artifactName: 'ChatRoom'
+    targetPath: $(Build.ArtifactStagingDirectory)
