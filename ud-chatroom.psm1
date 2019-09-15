@@ -1,5 +1,5 @@
 function Start-UDChatroom {
-    param($Port = 10000, [Switch]$AllowHttpForLogin)
+    param($Port = 10000)
     $loginPage = New-UDLoginPage -AuthenticationMethod @(
         New-UDAuthenticationMethod -Endpoint {
             param([PSCredential]$Credentials)
@@ -11,17 +11,7 @@ function Start-UDChatroom {
     $dashboard = New-UDDashboard -Title "PowerShell Universal Dashboard Chatroom" -Content {
         New-UDRow -Columns { 
             New-UDColumn -Size 12 -Endpoint {
-                $Messages = Invoke-PostgreSqlQuery -Sql "SELECT timestamp, message, user_name FROM chat_log ORDER BY Timestamp DESC LIMIT 10" -ConnectionString $ConnectionString
-    
-                [array]::Reverse($Messages)
-    
-                New-UDElement -Tag "ul" -Id "chatroom" -Attributes @{ className = "collection" } -Content {
-                    Foreach($Message in $Messages) {
-                        New-UDElement -Tag "li" -Attributes @{ className = "collection-item" } -Content {
-                            "$($Message.timestamp) $($Message.user_name) : $($Message.message)"
-                        }
-                    }
-                }
+                New-UDCodeEditor -Id 'chatroom' -Height '70ch' -Width '100%' -Theme 'vs-dark'
             }
         }
     
@@ -45,15 +35,6 @@ function Start-UDChatroom {
                         if ([String]::IsNullOrEmpty($MessageContent)) {
                             return
                         }
-    
-                        $params = @{"ts"=$MessageTimestamp; "m"=$MessageContent; "u"=$User}
-    
-                        "INSERT INTO chat_log (timestamp, message, user_name) VALUES (@ts, @m, @u);" | Invoke-PostgreSqlQuery -Parameters $params -ConnectionString $ConnectionString -CUD
-    
-                        $message = New-UDElement -Tag "li" -Attributes @{ className = "collection-item" } -Content {
-                            
-                            "$MessageTimestamp $User : $MessageContent "
-                        }
                         
                         Set-UDElement -Id "message" -Attributes @{ 
                             type = "text"
@@ -61,25 +42,13 @@ function Start-UDChatroom {
                             placeholder = "Type a chat message" 
                         }
     
-                        Add-UDElement -ParentId "chatroom" -Content { $message } -Broadcast
+                        Add-UDElement -ParentId "chatroom" -Content {  "[$MessageTimestamp] $($User): $MessageContent $([Environment]::Newline)" } -Broadcast
                     }
                 } -Content {"Send"}
             }
-    
-            New-UDColumn -Size 2 {
-                New-UDElement -Tag "a" -Attributes @{
-                    className = "btn"
-                    onClick = {
-                        Clear-UDElement -Id "chatroom"
-                    }
-                } -Content {"Clear Messages"}
-            }
         }
-    } -LoginPage $LoginPage -EndpointInitializationScript {
-        Import-Module InvokeQuery
-        $ConnectionString = "User Id=postgres;host=localhost;Database=udchatroom"
-    }
+    } -LoginPage $LoginPage 
     
-    Start-UDDashboard -Port $Port -Dashboard $dashboard -AllowHttpForLogin:$AllowHttpForLogin
+    Start-UDDashboard -Port $Port -Dashboard $dashboard -AllowHttpForLogin -Force -Design
 }
 
