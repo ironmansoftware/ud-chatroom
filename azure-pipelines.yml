@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: pwsh -File './deploy.ps1'
+- script: pwsh -File './deploy.ps1' -Staging $(Build.ArtifactStagingDirectory)
   displayName: 'Copy and Download UDs'
 
   # Publish Pipeline Artifact
