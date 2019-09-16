@@ -6,7 +6,7 @@ function Start-UDChatroom {
     
             New-UDAuthenticationResult -Success -UserName $Credentials.UserName
         }   
-    ) 
+    ) -WelcomeText "Please enter your user name. You can enter anything for your password."
 
     $EndpointInit = New-UDEndpointInitialization
     $Path = Split-Path (Get-Module UniversalDashboard).Path -Parent
